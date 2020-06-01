@@ -1,64 +1,71 @@
 package corp
 
-import "testing"
+import (
+	"log"
+	"testing"
+)
 
 func TestOperatingProfit(t *testing.T) {
-	rev := Acc{
-		Type: Revenue,
-		VAT:  V10,
-	}
-	exp := Acc{
-		Type: Expence,
-		VAT:  A10,
-	}
 	c := New()
-	c.Accs = append(c.Accs, &rev, &exp)
 	tt := []struct {
-		rev float64
-		exp float64
+		rt  AccType
+		rv  VatType
+		rvl float64
+		et  AccType
+		ev  VatType
+		evl float64
 		e   float64
 	}{
-		{rev: 1000, exp: 500, e: 500},
-		{rev: 200, exp: 400, e: -200},
+		{rt: Revenue, rv: V10, rvl: 1000, et: Expence, ev: A10, evl: 500, e: 500},
+		{rt: Revenue, rv: V10, rvl: 2000, et: Expence, ev: A10, evl: 2500, e: -500},
 	}
 	for i, test := range tt {
-		rev.Value = test.rev
-		exp.Value = test.exp
+		if err := c.CreateAcc("rev", test.rt, test.rvl, test.rv); err != nil {
+			log.Fatal(err)
+		}
+		if err := c.CreateAcc("exp", test.et, test.evl, test.ev); err != nil {
+			log.Fatal(err)
+		}
 		if test.e != c.OperatingProfit() {
 			t.Errorf("i: %v,e: %v, a: %v", i, test.e, c.OperatingProfit())
+		}
+		if err := c.DeleteAcc("rev"); err != nil {
+			log.Fatal(err)
+		}
+		if err := c.DeleteAcc("exp"); err != nil {
+			log.Fatal(err)
 		}
 	}
 }
 
 func TestVat(t *testing.T) {
-	revTax := Acc{Type: Revenue, VAT: V10}
-	revEx := Acc{Type: Revenue, VAT: V0}
-	revFr := Acc{Type: Revenue, VAT: VF}
-	expCurrTax := Acc{Type: Expence, VAT: A10t}
-	expCurrCmn := Acc{Type: Expence, VAT: A10c}
+	c := New()
 	tt := []struct {
 		revTax     float64
 		revEx      float64
 		revFr      float64
 		expCurrTax float64
 		expCurrCmn float64
-		e          float64
+		ep          float64
+		et          float64
 	}{
-		{revTax: 2000, revEx: 2000., revFr: 1000., expCurrTax: 100., expCurrCmn: 200., e: 174},
-		{revTax: 1000., revEx: 2000., revFr: 0., expCurrTax: 100., expCurrCmn: 200., e: 70},
-		{revTax: 0., revEx: 2000., revFr: 0., expCurrTax: 100., expCurrCmn: 200., e: -30},
+		{revTax: 2000, revEx: 2000., revFr: 1000., expCurrTax: 100., expCurrCmn: 200., ep:4700,et: 174},
+		{revTax: 1000., revEx: 2000., revFr: 0., expCurrTax: 100., expCurrCmn: 200.,ep:2700, et: 70},
+		{revTax: 0., revEx: 2000., revFr: 0., expCurrTax: 100., expCurrCmn: 200.,ep:1700, et: -30},
 	}
 	for i, test := range tt {
-		c := New()
-		c.Accs = []*Acc{&revTax, &revEx, &revFr, &expCurrTax, &expCurrCmn}
-		revTax.Value = test.revTax
-		revEx.Value = test.revEx
-		revFr.Value = test.revFr
-		expCurrTax.Value = test.expCurrTax
-		expCurrCmn.Value = test.expCurrCmn
-		vat := c.Vat()
-		if vat != test.e {
-			t.Errorf("\ni: %v\ne: %v\na: %v\nop: %v\nall: %+v\n", i, test.e, vat, c.OperatingProfit(), *c)
+		c.CreateAcc("rt",Revenue,test.revTax,V10)
+		c.CreateAcc("re",Revenue,test.revEx,V0)
+		c.CreateAcc("rf",Revenue,test.revFr,VF)
+		c.CreateAcc("et",Expence,test.expCurrTax,A10t)
+		c.CreateAcc("ec",Expence,test.expCurrCmn,A10c)
+		if c.OperatingProfit() != test.ep || c.Vat() != test.et {
+			t.Errorf("\ni: %v\nep: %v\nap: %v\net: %v\nat: %v\nall: %+v\n", i, test.ep,c.OperatingProfit(),test.et, c.Vat(),  *c)
 		}
+		c.DeleteAcc("rt")
+		c.DeleteAcc("re")
+		c.DeleteAcc("rf")
+		c.DeleteAcc("et")
+		c.DeleteAcc("ec")
 	}
 }

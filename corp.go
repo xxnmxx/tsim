@@ -1,14 +1,17 @@
 package corp
 
+import "fmt"
+
 // Corp struct
 type Corp struct {
-	Accs []*Acc
+	Accs map[string]Acc
 	CIT  CIT
 	VAT  VAT
 }
 
 func New() *Corp {
 	c := &Corp{}
+	c.Accs = make(map[string]Acc)
 	c.CIT.Rate = 0.3
 	c.VAT.LumpSum = false
 	return c
@@ -31,65 +34,69 @@ func (c *Corp) OperatingProfit() float64 {
 func (c *Corp) Cit() float64 { return (c.OperatingProfit() + c.CIT.Adj) * c.CIT.Rate }
 
 func (c *Corp) Vat() float64 {
+	c.accToVat()
 	if c.VAT.LumpSum {
 		return c.VAT.OutputTax() - c.VAT.InputTaxLump()
 	}
 	return c.VAT.OutputTax() - c.VAT.InputTaxInd()
 }
 
-func (c *Corp) accToVat(a Acc) {
-	switch a {
-	// Sales VAT
-	case V10:
-		c.VAT.base.V10 += a.Value
-	case V8:
-		c.VAT.base.V8 += a.Value
-	case V8R:
-		c.VAT.base.V8R += a.Value
-	case V5:
-		c.VAT.base.V5 += a.Value
-	case V0:
-		c.VAT.base.V0 += a.Value
-	case VF:
-		c.VAT.base.VF += a.Value
-	case VN:
-		c.VAT.base.VN += a.Value
-	// Purchase VAT Individual
-	case A10t:
-		c.VAT.base.A10t += a.Value
-	case A10c:
-		c.VAT.base.A10c += a.Value
-	case A10n:
-		c.VAT.base.A10n += a.Value
-	case A8t:
-		c.VAT.base.A8t += a.Value
-	case A8c:
-		c.VAT.base.A8c += a.Value
-	case A8n:
-		c.VAT.base.A8n += a.Value
-	case A8Rt:
-		c.VAT.base.A8Rt += a.Value
-	case A8Rc:
-		c.VAT.base.A8Rc += a.Value
-	case A8Rn:
-		c.VAT.base.A8Rn += a.Value
-	case A5t:
-		c.VAT.base.A5t += a.Value
-	case A5c:
-		c.VAT.base.A5c += a.Value
-	case A5n:
-		c.VAT.base.A5n += a.Value
-	// Purchase VAT LumpSum method.
-	case A10:
-		c.VAT.base.A10 += a.Value
-	case A8:
-		c.VAT.base.A8 += a.Value
-	case A5:
-		c.VAT.base.A5 += a.Value
-	case AF:
-		c.VAT.base.AF += a.Value
-	case AN:
-		c.VAT.base.AN += a.Value
+func (c *Corp) accToVat() {
+	c.VAT.base = base{}
+	for _, acc := range c.Accs {
+		switch acc.VAT {
+		// Sales VAT
+		case V10:
+			c.VAT.base.V10 += acc.Value
+		case V8:
+			c.VAT.base.V8 += acc.Value
+		case V8R:
+			c.VAT.base.V8R += acc.Value
+		case V5:
+			c.VAT.base.V5 += acc.Value
+		case V0:
+			c.VAT.base.V0 += acc.Value
+		case VF:
+			c.VAT.base.VF += acc.Value
+		case VN:
+			c.VAT.base.VN += acc.Value
+		// Purchase VAT Individual
+		case A10t:
+			c.VAT.base.A10t += acc.Value
+		case A10c:
+			c.VAT.base.A10c += acc.Value
+		case A10n:
+			c.VAT.base.A10n += acc.Value
+		case A8t:
+			c.VAT.base.A8t += acc.Value
+		case A8c:
+			c.VAT.base.A8c += acc.Value
+		case A8n:
+			c.VAT.base.A8n += acc.Value
+		case A8Rt:
+			c.VAT.base.A8Rt += acc.Value
+		case A8Rc:
+			c.VAT.base.A8Rc += acc.Value
+		case A8Rn:
+			c.VAT.base.A8Rn += acc.Value
+		case A5t:
+			c.VAT.base.A5t += acc.Value
+		case A5c:
+			c.VAT.base.A5c += acc.Value
+		case A5n:
+			c.VAT.base.A5n += acc.Value
+		// Purchase VAT LumpSum method.
+		case A10:
+			c.VAT.base.A10 += acc.Value
+		case A8:
+			c.VAT.base.A8 += acc.Value
+		case A5:
+			c.VAT.base.A5 += acc.Value
+		case AF:
+			c.VAT.base.AF += acc.Value
+		case AN:
+			c.VAT.base.AN += acc.Value
+		}
 	}
 }
 
@@ -135,33 +142,31 @@ const (
 
 type Acc struct {
 	Type  AccType // Asset etc
-	VAT   VatType
-	Name  string
 	Value float64
+	VAT   VatType
 }
 
-func (c *Corp) RegAcc(t AccType, vat VatType, n string, v float64) {
-	for _, acc := range c.Accs {
-		if acc.Name == n {
-			fmt.Println("Already exists.")
-			return
-		}
+func (c *Corp) CreateAcc(name string, t AccType, v float64,vat VatType) error {
+	_, ok := c.Accs[name]
+	if ok {
+		return fmt.Errorf("%v already exists", name)
 	}
-	a := Acc{
+	c.Accs[name] = Acc{
 		Type:  t,
-		VAT:   vat,
-		Name:  n,
 		Value: v,
+		VAT:   vat,
 	}
-	c.Accs = append(c.Accs,a)
-	c.accToVat(a)
+	return nil
 }
 
-func (c *Corp) DelAcc(n string) {
-	for _, acc := range c.Accs {
-		if acc == n {
-		}
+func (c *Corp) DeleteAcc(name string) error {
+	_, ok := c.Accs[name]
+	if !ok {
+		return fmt.Errorf("%v does not exist", name)
 	}
+	delete(c.Accs, name)
+	// ToDo deduct value from VAT
+	return nil
 }
 
 // CIT struct
