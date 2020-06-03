@@ -2,10 +2,10 @@ package tsim
 
 import "testing"
 
-func TestNextToken(t *testing.T) {
-	input := 'crt=.'
+func TestReadChar(t *testing.T) {
+	input := `crt=.1`
 	l := NewLexer(input)
-	tt := {
+	tt := []struct{
 		e string
 	}{
 		{"c"},
@@ -18,5 +18,6 @@ func TestNextToken(t *testing.T) {
 		if string(l.ch) != test.e {
 			t.Errorf("i: %v,e: %v, a: %v",i,test.e,string(l.ch))
 		}
+		l.readChar()
 	}
 }

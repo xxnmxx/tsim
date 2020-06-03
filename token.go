@@ -5,11 +5,15 @@ type TokenType string
 const (
 	// Special
 	EOF = ""
+	ILLEGAL = "Illegal"
 
 	// Expression
 	IDENT  = "Identifier"
 	FLOAT  = "Float"
 	ASSIGN = "="
+
+	// Corp handling
+	NEW = "New"
 
 	// Acc handling
 	CRT = "Create"
@@ -17,7 +21,7 @@ const (
 	UPD = "Update"
 	DEL = "Delete"
 
-	// Infix
+	// Sep
 	DOT = "."
 )
 
@@ -27,16 +31,21 @@ type Token struct {
 }
 
 func newToken(t TokenType, l string) Token {
-	return &Token{Type: t, Literal: l}
+	return Token{Type: t, Literal: l}
 }
 
-// WIP
-func lookupKey() Token {
-	keyword := map[string]Token{
-		"crt": Token{Type: CRT, Literal: "crt"},
-		"red": Token{Type: RED, Literal: "red"},
-		"upd": Token{Type: UPD, Literal: "upd"},
-		"del": Token{Type: DEL, Literal: "del"},
-	}
+var keyword = map[string]Token{
+	"new": Token{Type: NEW, Literal:"new"},
+	"crt": Token{Type: CRT, Literal: "crt"},
+	"red": Token{Type: RED, Literal: "red"},
+	"upd": Token{Type: UPD, Literal: "upd"},
+	"del": Token{Type: DEL, Literal: "del"},
+}
 
+func lookupKey(literal string) Token {
+	tok, ok := keyword[literal]
+	if !ok {
+		return newToken(IDENT, literal)
+	}
+	return tok
 }
