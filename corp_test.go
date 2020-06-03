@@ -1,4 +1,4 @@
-package corp
+package tsim
 
 import (
 	"log"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestOperatingProfit(t *testing.T) {
-	c := New()
+	c := NewCorp()
 	tt := []struct {
 		rt  AccType
 		rv  VatType
@@ -39,28 +39,28 @@ func TestOperatingProfit(t *testing.T) {
 }
 
 func TestVat(t *testing.T) {
-	c := New()
+	c := NewCorp()
 	tt := []struct {
 		revTax     float64
 		revEx      float64
 		revFr      float64
 		expCurrTax float64
 		expCurrCmn float64
-		ep          float64
-		et          float64
+		ep         float64
+		et         float64
 	}{
-		{revTax: 2000, revEx: 2000., revFr: 1000., expCurrTax: 100., expCurrCmn: 200., ep:4700,et: 174},
-		{revTax: 1000., revEx: 2000., revFr: 0., expCurrTax: 100., expCurrCmn: 200.,ep:2700, et: 70},
-		{revTax: 0., revEx: 2000., revFr: 0., expCurrTax: 100., expCurrCmn: 200.,ep:1700, et: -30},
+		{revTax: 2000, revEx: 2000., revFr: 1000., expCurrTax: 100., expCurrCmn: 200., ep: 4700, et: 174},
+		{revTax: 1000., revEx: 2000., revFr: 0., expCurrTax: 100., expCurrCmn: 200., ep: 2700, et: 70},
+		{revTax: 0., revEx: 2000., revFr: 0., expCurrTax: 100., expCurrCmn: 200., ep: 1700, et: -30},
 	}
 	for i, test := range tt {
-		c.CreateAcc("rt",Revenue,test.revTax,V10)
-		c.CreateAcc("re",Revenue,test.revEx,V0)
-		c.CreateAcc("rf",Revenue,test.revFr,VF)
-		c.CreateAcc("et",Expence,test.expCurrTax,A10t)
-		c.CreateAcc("ec",Expence,test.expCurrCmn,A10c)
+		c.CreateAcc("rt", Revenue, test.revTax, V10)
+		c.CreateAcc("re", Revenue, test.revEx, V0)
+		c.CreateAcc("rf", Revenue, test.revFr, VF)
+		c.CreateAcc("et", Expence, test.expCurrTax, A10t)
+		c.CreateAcc("ec", Expence, test.expCurrCmn, A10c)
 		if c.OperatingProfit() != test.ep || c.Vat() != test.et {
-			t.Errorf("\ni: %v\nep: %v\nap: %v\net: %v\nat: %v\nall: %+v\n", i, test.ep,c.OperatingProfit(),test.et, c.Vat(),  *c)
+			t.Errorf("\ni: %v\nep: %v\nap: %v\net: %v\nat: %v\nall: %+v\n", i, test.ep, c.OperatingProfit(), test.et, c.Vat(), *c)
 		}
 		c.DeleteAcc("rt")
 		c.DeleteAcc("re")

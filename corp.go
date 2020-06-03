@@ -1,4 +1,4 @@
-package corp
+package tsim
 
 import "fmt"
 
@@ -9,7 +9,7 @@ type Corp struct {
 	VAT  VAT
 }
 
-func New() *Corp {
+func NewCorp() *Corp {
 	c := &Corp{}
 	c.Accs = make(map[string]Acc)
 	c.CIT.Rate = 0.3
@@ -146,7 +146,7 @@ type Acc struct {
 	VAT   VatType
 }
 
-func (c *Corp) CreateAcc(name string, t AccType, v float64,vat VatType) error {
+func (c *Corp) CreateAcc(name string, t AccType, v float64, vat VatType) error {
 	_, ok := c.Accs[name]
 	if ok {
 		return fmt.Errorf("%v already exists", name)
