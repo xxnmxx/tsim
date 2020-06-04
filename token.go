@@ -4,25 +4,21 @@ type TokenType string
 
 const (
 	// Special
-	EOF = ""
-	ILLEGAL = "Illegal"
-
+	EOF     = ""
+	ILLEGAL = "ILLEGAL"
 	// Expression
 	IDENT  = "Identifier"
-	FLOAT  = "Float"
+	FLOAT  = "FLOAT"
 	ASSIGN = "="
-
-	// Corp handling
-	NEW = "New"
-
-	// Acc handling
-	CRT = "Create"
-	RED = "Read"
-	UPD = "Update"
-	DEL = "Delete"
-
+	// Keywords
+	NEW = "NEW"
+	CRT = "CRT"
+	RED = "RED"
+	UPD = "UPD"
+	DEL = "DEL"
 	// Sep
 	DOT = "."
+	SEMICOLON = ";"
 )
 
 type Token struct {
@@ -35,7 +31,7 @@ func newToken(t TokenType, l string) Token {
 }
 
 var keyword = map[string]Token{
-	"new": Token{Type: NEW, Literal:"new"},
+	"new": Token{Type: NEW, Literal: "new"},
 	"crt": Token{Type: CRT, Literal: "crt"},
 	"red": Token{Type: RED, Literal: "red"},
 	"upd": Token{Type: UPD, Literal: "upd"},

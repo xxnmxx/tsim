@@ -1,7 +1,5 @@
 package tsim
 
-import "fmt"
-
 type Lexer struct {
 	input        string
 	position     int
@@ -26,6 +24,7 @@ func (l *Lexer) readChar() {
 
 // ToDo
 func (l *Lexer) NextToken() Token {
+	l.eraseSpace()
 	switch l.ch {
 	case '.':
 		return newToken(DOT, string(l.ch))
@@ -39,6 +38,15 @@ func (l *Lexer) NextToken() Token {
 			return lookupKey(literal)
 		}
 		if l.isDigit(l.ch) {
+			preLiteral := l.readDigit()
+			surLiteral := ""
+			if l.ch == '.' {
+				surLiteral = l.readDigit()
+			} else {
+				return newToken(FLOAT, surLiteral)
+			}
+			literal := preLiteral + "." + surLiteral
+			return newToken(FLOAT, literal)
 		}
 		return newToken(ILLEGAL, ILLEGAL)
 	}
@@ -53,7 +61,7 @@ func (l *Lexer) isLetter(c byte) bool {
 }
 
 func (l *Lexer) isDigit(c byte) bool {
-	return '0' <= '9'
+	return '0' <= c && '9' <= c
 }
 
 func (l *Lexer) readIdentifier() string {
@@ -64,20 +72,16 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[position:l.readPosition]
 }
 
-// Can not deal like 0.0.1111
-func (l *Lexer) readFloat() (string, error) {
+func (l *Lexer) readDigit() string {
 	position := l.position
 	for l.isDigit(l.ch) {
 		l.readChar()
 	}
-	if l.ch == '.' {
-		for l.isDigit(l.ch) {
-			l.readChar()
-		}
-		if l.ch == '.' {
-			return "", fmt.Errorf("too many dots")
-		}
-		return l.input[position:l.readPosition], nil
+	return l.input[position:l.readPosition]
+}
+
+func (l *Lexer) eraseSpace() {
+	if l.ch == ' ' {
+		l.readChar()
 	}
-	return l.input[position:l.readPosition], nil
 }
