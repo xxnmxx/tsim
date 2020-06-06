@@ -24,44 +24,57 @@ func (l *Lexer) readChar() {
 
 // ToDo
 func (l *Lexer) NextToken() Token {
+	var tok Token
 	l.eraseSpace()
 	switch l.ch {
 	case '.':
-		return newToken(DOT, string(l.ch))
+		tok = newToken(DOT, l.ch)
+	case ';':
+		tok = newToken(SEMICOLON, l.ch)
 	case '=':
-		return newToken(ASSIGN, string(l.ch))
+		tok = newToken(ASSIGN, l.ch)
 	case 0:
-		return newToken(EOF, string(0))
+		tok.Literal = ""
+		tok.Type = EOF
 	default:
 		if l.isLetter(l.ch) {
-			literal := l.readIdentifier()
-			return lookupKey(literal)
+			tok.Literal = l.readIdentifier()
+			tok.Type = LookupKey(tok.Literal)
+			return tok
+		} else {
+			tok = newToken(ILLEGAL, l.ch)
 		}
 		if l.isDigit(l.ch) {
 			preLiteral := l.readDigit()
 			surLiteral := ""
 			if l.ch == '.' {
+				l.readChar()
 				surLiteral = l.readDigit()
+				literal := preLiteral + "." + surLiteral
+				tok.Literal = literal
+				tok.Type = FLOAT
+				return tok
 			} else {
-				return newToken(FLOAT, surLiteral)
+				tok.Literal = preLiteral
+				tok.Type = FLOAT
+				return tok
 			}
-			literal := preLiteral + "." + surLiteral
-			return newToken(FLOAT, literal)
 		}
-		return newToken(ILLEGAL, ILLEGAL)
 	}
+	l.readChar()
+	return tok
 }
 
 func (l *Lexer) peekChar() byte {
 	return l.input[l.readPosition]
 }
 
-func (l *Lexer) isLetter(c byte) bool {
-	return 'a' <= c && 'z' <= c || 'A' <= c && 'Z' <= c || c == '_'
+func (l *Lexer) isLetter(ch byte) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
-func (l *Lexer) isDigit(c byte) bool {
-	return '0' <= c && '9' <= c
+func (l *Lexer) isDigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
 }
 
 func (l *Lexer) readIdentifier() string {
@@ -69,7 +82,7 @@ func (l *Lexer) readIdentifier() string {
 	for l.isLetter(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.readPosition]
+	return l.input[position:l.position]
 }
 
 func (l *Lexer) readDigit() string {
@@ -77,11 +90,11 @@ func (l *Lexer) readDigit() string {
 	for l.isDigit(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.readPosition]
+	return l.input[position:l.position]
 }
 
 func (l *Lexer) eraseSpace() {
-	if l.ch == ' ' {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }

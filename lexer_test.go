@@ -25,33 +25,35 @@ func TestReadChar(t *testing.T) {
 func TestNextToken(t *testing.T) {
 	input := `new a;
 	crt c.rev = 100
-	upd c.exp = 1.00`
+	upd c.exp = 2.00`
 	l := NewLexer(input)
 	tt := []struct {
 		eType    TokenType
 		eLiteral string
 	}{
 		{eType: NEW, eLiteral: "new"},
-		{eType: IDENT, eLiteral: "c"},
+		{eType: IDENT, eLiteral: "a"},
 		{eType: SEMICOLON, eLiteral: ";"},
-		{eType: CRT, eLiteral: "crt"},
+		{eType: CREATE, eLiteral: "crt"},
 		{eType: IDENT, eLiteral: "c"},
 		{eType: DOT, eLiteral: "."},
 		{eType: IDENT, eLiteral: "rev"},
 		{eType: ASSIGN, eLiteral: "="},
 		{eType: FLOAT, eLiteral: "100"},
-		{eType: UPD, eLiteral: "upd"},
+		{eType: UPDATE, eLiteral: "upd"},
 		{eType: IDENT, eLiteral: "c"},
 		{eType: DOT, eLiteral: "."},
 		{eType: IDENT, eLiteral: "exp"},
 		{eType: ASSIGN, eLiteral: "="},
-		{eType: FLOAT, eLiteral: "1.00"},
+		{eType: FLOAT, eLiteral: "2.00"},
 	}
-	tok := l.NextToken()
 	for i, test := range tt {
-		if tok.Type == test.eType && tok.Literal == test.eLiteral {
-			t.Errorf("i: %v,etype: %v,eliteral %v, atype: %v, aliteral: %v", i, test.eType, test.eLiteral, tok.Type, tok.Literal)
+	tok := l.NextToken()
+		if tok.Type != test.eType {
+			t.Errorf("typeError\ni: %v\tetype: %v\tatype: %v\n", i, test.eType, tok.Type)
 		}
-		l.NextToken()
+		if tok.Literal != test.eLiteral {
+			t.Errorf("literalError\ni: %v\teliteral: %v\taliteral: %v", i, test.eLiteral, tok.Literal)
+		}
 	}
 }
