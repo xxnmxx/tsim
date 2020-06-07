@@ -5,3 +5,6 @@ type Parser struct {
 	curToken  Token
 	peekToken Token
 }
+
+func NewParser(l) *Parser {
+}
