@@ -25,6 +25,17 @@ func (p *Program) TokenLiteral() string {
 	return ""
 }
 
+// Statements
+type NewStatement struct {
+	Token Token
+	Name  *Identifier
+	Value Expression
+}
+
+func (ns *NewStatement) TokenLiteral() string { return ns.Token.Literal }
+func (ns *NewStatement) statementNode()       {}
+
+// Expressions
 type Identifier struct {
 	Token Token // IDENT
 	Value string
@@ -33,11 +44,10 @@ type Identifier struct {
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
 func (i *Identifier) expressionNode()      {}
 
-type NewStatement struct {
-	Token Token
-	Name  string
-	Value Expression
+type CorpLiteral struct {
+	Token Token // CORP
+	Body  *Corp
 }
 
-func (ns *NewStatement) TokenLiteral() string { return ns.Token.Literal }
-func (ns *NewStatement) statementNode()      {}
+func (cp *Corp) TokenLiteral() string { return cp.Token.Literal }
+func (cp *Corp) expressionNode()      {}

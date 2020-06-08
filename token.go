@@ -10,6 +10,7 @@ const (
 	IDENT  = "IDENT"
 	FLOAT  = "FLOAT"
 	ASSIGN = "="
+	CORP = "CORP"
 	// Keywords
 	NEW    = "NEW"
 	CREATE = "CREATE"
