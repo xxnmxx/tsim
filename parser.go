@@ -17,13 +17,13 @@ func NewParser(l *Lexer) *Parser {
 
 
 func (p *Parser) ParseProgram() *Program {
-	program := &Program
+	program := &Program{}
 	program.Statements = []Statement{}
 
-	for curToken != EOF {
-		stmt := parseStatement()
+	for p.curToken.Type != EOF {
+		stmt := p.parseStatement()
 		if stmt != nil {
-			program.Statements = append(program.Statement, stmt)
+			program.Statements = append(program.Statements, stmt)
 		}
 		p.nextToken()
 	}
@@ -40,12 +40,12 @@ func (p *Parser) parseStatement() Statement {
 }
 
 func (p *Parser) parseNewStatement() *NewStatement {
-	stmt := NewStatement{Token: p.Token}
+	stmt := NewStatement{Token: p.curToken}
 	if !p.expectPeek(IDENT) {
 		return nil
 	}
 	stmt.Name = &Identifier{Token:p.curToken,Value:p.curToken.Literal}
-	return stmt
+	return &stmt
 }
 
 // Helper functions
@@ -55,11 +55,11 @@ func (p *Parser) nextToken() {
 }
 
 func (p *Parser) curTokenIs(t TokenType) bool {
-	return curToken == t
+	return p.curToken.Type == t
 }
 
 func (p *Parser) peekTokenIs(t TokenType) bool {
-	return peekToken == t
+	return p.peekToken.Type == t
 }
 
 func (p *Parser) expectPeek(t TokenType) bool {

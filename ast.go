@@ -32,8 +32,8 @@ type NewStatement struct {
 	Value Expression
 }
 
-func (ns *NewStatement) TokenLiteral() string { return ns.Token.Literal }
 func (ns *NewStatement) statementNode()       {}
+func (ns *NewStatement) TokenLiteral() string { return ns.Token.Literal }
 
 // Expressions
 type Identifier struct {
@@ -49,5 +49,5 @@ type CorpLiteral struct {
 	Body  *Corp
 }
 
-func (cp *Corp) TokenLiteral() string { return cp.Token.Literal }
-func (cp *Corp) expressionNode()      {}
+func (cp *CorpLiteral) TokenLiteral() string { return cp.Token.Literal }
+func (cp *CorpLiteral) expressionNode()      {}

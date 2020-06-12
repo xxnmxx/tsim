@@ -1,2 +1,3 @@
 05/31 make Vat() function and test. test still not green.
 06/07 Let's make crt literal.
+06/08 Continue to make NewLiteral related things.Let's make enviroment next.
