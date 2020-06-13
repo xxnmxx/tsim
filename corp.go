@@ -156,6 +156,9 @@ type Acc struct {
 	VAT   VatType
 }
 
+func (a *Acc) expressionNode() {}
+func (a *Acc) TokenLiteral() {} // dammy
+
 func (c *Corp) CreateAcc(name string, t AccType, v float64, vat VatType) error {
 	_, ok := c.Accs[name]
 	if ok {

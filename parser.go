@@ -48,6 +48,13 @@ func (p *Parser) parseNewStatement() *NewStatement {
 	return &stmt
 }
 
+func (p *Parser) parseCreateStatement() *CreateStatement {
+	stmt := CreateStatement{Token:p.curToken}
+	if !p.expectPeek(IDENT) {
+		return nil
+	}
+}
+
 // Helper functions
 func (p *Parser) nextToken() {
 	p.curToken = p.peekToken
