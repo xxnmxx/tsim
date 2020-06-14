@@ -9,6 +9,18 @@ type Corp struct {
 	VAT  VAT
 }
 
+func NewCorp() *Corp {
+	c := &Corp{}
+	c.Accs = make(map[string]Acc)
+	c.CIT.Rate = 0.3
+	c.VAT.LumpSum = false
+	return c
+}
+
+// For Node Interface
+func (c *Corp) TokenLiteral() string { return string(CORP) }
+func (c *Corp) expressionNode()      {}
+
 // For Object Interface
 func (c *Corp) Type() ObjectType {
 	return CORP_OBJ
@@ -17,14 +29,6 @@ func (c *Corp) Type() ObjectType {
 func (c *Corp) Inspect() string {
 	s := fmt.Sprintf("OP:%v\tCIT:%v\tVAT:%v\t", c.OperatingProfit(), c.Cit(), c.Vat())
 	return s
-}
-
-func NewCorp() *Corp {
-	c := &Corp{}
-	c.Accs = make(map[string]Acc)
-	c.CIT.Rate = 0.3
-	c.VAT.LumpSum = false
-	return c
 }
 
 // Corp methods
@@ -157,7 +161,7 @@ type Acc struct {
 }
 
 func (a *Acc) expressionNode() {}
-func (a *Acc) TokenLiteral() {} // dammy
+func (a *Acc) TokenLiteral()   {} // dammy
 
 func (c *Corp) CreateAcc(name string, t AccType, v float64, vat VatType) error {
 	_, ok := c.Accs[name]

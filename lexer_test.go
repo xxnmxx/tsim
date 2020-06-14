@@ -24,8 +24,8 @@ func TestReadChar(t *testing.T) {
 
 func TestNextToken(t *testing.T) {
 	input := `new a;
-	crt c.rev = 100
-	upd c.exp = 2.00`
+	crt c.sales = rev:100:v10;
+	upd c.cost = exp:2.00:a8`
 	l := NewLexer(input)
 	tt := []struct {
 		eType    TokenType
@@ -37,18 +37,23 @@ func TestNextToken(t *testing.T) {
 		{eType: CREATE, eLiteral: "crt"},
 		{eType: IDENT, eLiteral: "c"},
 		{eType: DOT, eLiteral: "."},
-		{eType: IDENT, eLiteral: "rev"},
+		{eType: IDENT, eLiteral: "sales"},
 		{eType: ASSIGN, eLiteral: "="},
+		{eType: REVENUE, eLiteral: "rev"},
 		{eType: FLOAT, eLiteral: "100"},
+		{eType: v10, eLiteral: "v10"},
+		{eType: SEMICOLON, eLiteral: ";"},
 		{eType: UPDATE, eLiteral: "upd"},
 		{eType: IDENT, eLiteral: "c"},
 		{eType: DOT, eLiteral: "."},
-		{eType: IDENT, eLiteral: "exp"},
+		{eType: IDENT, eLiteral: "cost"},
 		{eType: ASSIGN, eLiteral: "="},
+		{eType: EXPENCE, eLiteral: "exp"},
 		{eType: FLOAT, eLiteral: "2.00"},
+		{eType: a8, eLiteral: "a8"},
 	}
 	for i, test := range tt {
-	tok := l.NextToken()
+		tok := l.NextToken()
 		if tok.Type != test.eType {
 			t.Errorf("typeError\ni: %v\tetype: %v\tatype: %v\n", i, test.eType, tok.Type)
 		}

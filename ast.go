@@ -29,7 +29,7 @@ func (p *Program) TokenLiteral() string {
 type NewStatement struct {
 	Token Token
 	Name  *Identifier
-	Value Expression
+	Value *Corp
 }
 
 func (ns *NewStatement) statementNode()       {}
@@ -37,12 +37,13 @@ func (ns *NewStatement) TokenLiteral() string { return ns.Token.Literal }
 
 type CreateStatement struct {
 	Token Token // CREATE token
-	Name *Identifier
+	Attr  *Identifier
+	Name  *Identifier
 	Value Expression
 }
 
-func (cs *CreateStatement) statementNode(){}
-func (cs *CreateStatement) TokenLiteral() string {return cs.Token.Literal}
+func (cs *CreateStatement) statementNode()       {}
+func (cs *CreateStatement) TokenLiteral() string { return cs.Token.Literal }
 
 // Expressions
 type Identifier struct {
@@ -60,3 +61,13 @@ type CorpLiteral struct {
 
 func (cp *CorpLiteral) TokenLiteral() string { return cp.Token.Literal }
 func (cp *CorpLiteral) expressionNode()      {}
+
+type AccLiteral struct {
+	Token    Token // ACC
+	AccToken Token // REVENUE etc
+	Value    Token // FLOAT
+	VatToken Token // V8 etc
+}
+
+func (al *AccLiteral) TokenLiteral() string { return al.Token.Literal }
+func (al *AccLiteral) expressionNode()      {}

@@ -13,6 +13,7 @@ func Eval(node Node, env *Enviroment) Object {
 			return val
 		}
 		env.Set(node.Name.Value, val)
+		return node.Value
 	// Expressions
 	case *CorpLiteral:
 		return NewCorp()

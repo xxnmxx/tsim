@@ -7,10 +7,10 @@ type Enviroment struct {
 
 func NewEnviroment() *Enviroment {
 	s := make(map[string]Object)
-	return &Enviroment{store:s,outer:nil}
+	return &Enviroment{store: s, outer: nil}
 }
 
-func (e *Enviroment) Get(name string) (Object,bool) {
+func (e *Enviroment) Get(name string) (Object, bool) {
 	obj, ok := e.store[name]
 	if !ok && e.outer != nil {
 		obj, ok = e.outer.Get(name)

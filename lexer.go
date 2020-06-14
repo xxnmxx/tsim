@@ -27,7 +27,17 @@ func (l *Lexer) readChar() {
 func (l *Lexer) NextToken() Token {
 	var tok Token
 	l.eraseSpace()
+	// If you do not need readChar(), use return in case statement.
 	switch l.ch {
+	case ':':
+		tok.Literal = l.readColonLiteral()
+		if tok.Literal[0] == 'v' || tok.Literal[0] == 'a' {
+			tok.Type = LookupKey(tok.Literal)
+			return tok
+		} else {
+			tok.Type = FLOAT
+			return tok
+		}
 	case '.':
 		tok = newToken(DOT, l.ch)
 	case ';':
@@ -98,4 +108,13 @@ func (l *Lexer) eraseSpace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
+}
+
+func (l *Lexer) readColonLiteral() string {
+	l.readChar()
+	position := l.position
+	for !(l.ch == ':' || l.ch == 0 || l.ch == ';') {
+		l.readChar()
+	}
+	return l.input[position:l.position]
 }

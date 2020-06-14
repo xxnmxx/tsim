@@ -2,8 +2,8 @@ package tsim
 
 import (
 	"bufio"
-	"io"
 	"fmt"
+	"io"
 )
 
 const PROMPT = ">> "
@@ -23,11 +23,11 @@ func Start(in io.Reader, out io.Writer) {
 		p := NewParser(l)
 
 		program := p.ParseProgram()
-		evaluated := Eval(program,env)
+		evaluated := Eval(program, env)
 		//fmt.Println(evaluated)
 		if evaluated != nil {
 			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out,"\n")
+			io.WriteString(out, "\n")
 		}
 	}
 }

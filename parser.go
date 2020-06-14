@@ -15,7 +15,6 @@ func NewParser(l *Lexer) *Parser {
 	return p
 }
 
-
 func (p *Parser) ParseProgram() *Program {
 	program := &Program{}
 	program.Statements = []Statement{}
@@ -34,25 +33,67 @@ func (p *Parser) parseStatement() Statement {
 	switch p.curToken.Type {
 	case NEW:
 		return p.parseNewStatement()
+	case CREATE:
+		return p.parseCreateStatement()
 	default:
 		return nil
 	}
 }
 
 func (p *Parser) parseNewStatement() *NewStatement {
-	stmt := NewStatement{Token: p.curToken}
+	stmt := &NewStatement{Token: p.curToken}
 	if !p.expectPeek(IDENT) {
 		return nil
 	}
-	stmt.Name = &Identifier{Token:p.curToken,Value:p.curToken.Literal}
-	return &stmt
+	stmt.Name = &Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	stmt.Value = NewCorp()
+	p.nextToken()
+	if p.peekTokenIs(SEMICOLON) {
+		p.nextToken()
+	}
+	return stmt
 }
 
 func (p *Parser) parseCreateStatement() *CreateStatement {
-	stmt := CreateStatement{Token:p.curToken}
+	stmt := &CreateStatement{Token: p.curToken}
 	if !p.expectPeek(IDENT) {
 		return nil
 	}
+	stmt.Name = &Identifier{
+		Token: p.curToken,
+		Value: p.curToken.Literal,
+	}
+	if !p.expectPeek(DOT) {
+		return nil
+	}
+	if !p.expectPeek(IDENT) {
+		return nil
+	}
+	stmt.Attr = &Identifier{
+		Token: p.curToken,
+		Value: p.curToken.Literal,
+	}
+	if !p.expectPeek(ASSIGN) {
+		return nil
+	}
+	if !p.expectPeek(REVENUE) && !p.expectPeek(EXPENCE) && !p.expectPeek(ASSET) && !p.expectPeek(LIABILITY) {
+		return nil
+	}
+	al := p.parseAccLiteral()
+	stmt.Value = al
+	p.nextToken()
+	return stmt
+}
+
+func (p *Parser) parseAccLiteral() *AccLiteral {
+	al := AccLiteral{}
+	al.Token = Token{Type: ACC, Literal: "ACC"}
+	al.AccToken = p.curToken
+	p.nextToken()
+	al.Value = p.curToken
+	p.nextToken()
+	al.VatToken = p.curToken
+	return &al
 }
 
 // Helper functions
