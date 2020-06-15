@@ -17,15 +17,12 @@ func NewCorp() *Corp {
 	return c
 }
 
-// For Node Interface
+// Implements Node Interface
 func (c *Corp) TokenLiteral() string { return string(CORP) }
 func (c *Corp) expressionNode()      {}
 
-// For Object Interface
-func (c *Corp) Type() ObjectType {
-	return CORP_OBJ
-}
-
+// Implements Object Interface
+func (c *Corp) Type() ObjectType { return CORP_OBJ }
 func (c *Corp) Inspect() string {
 	s := fmt.Sprintf("OP:%v\tCIT:%v\tVAT:%v\t", c.OperatingProfit(), c.Cit(), c.Vat())
 	return s

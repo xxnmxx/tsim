@@ -8,11 +8,11 @@ func Eval(node Node, env *Enviroment) Object {
 	case *Program:
 		return evalProgram(node, env)
 	case *NewStatement:
-		val := Eval(node.Value, env)
-		if isError(val) {
-			return val
-		}
-		env.Set(node.Name.Value, val)
+		//val := Eval(node.Value, env)
+		//if isError(val) {
+		//	return val
+		//}
+		env.Set(node.Name.Value, node.Value)
 		return node.Value
 	// Expressions
 	case *CorpLiteral:
@@ -23,16 +23,17 @@ func Eval(node Node, env *Enviroment) Object {
 	return &Error{Message: "out of switch"}
 }
 
+// FixMe:( This must be wrong.
 func evalProgram(program *Program, env *Enviroment) Object {
 	var result Object
 	for _, statement := range program.Statements {
 		result = Eval(statement, env)
-		switch result.(type) {
+		//switch result.(type) {
 		//case *ReturnValue:
 		//	return result.Value
-		case *Error:
-			return result
-		}
+		//case *Error:
+		//	return result
+		//}
 	}
 	return result
 }
