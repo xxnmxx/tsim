@@ -14,6 +14,8 @@ func Eval(node Node, env *Enviroment) Object {
 		//}
 		env.Set(node.Name.Value, node.Value)
 		return node.Value
+	case *ExpressionStatement:
+		return Eval(node.Expression,env)
 	// Expressions
 	case *CorpLiteral:
 		return NewCorp()

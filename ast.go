@@ -45,6 +45,13 @@ type CreateStatement struct {
 func (cs *CreateStatement) statementNode()       {}
 func (cs *CreateStatement) TokenLiteral() string { return cs.Token.Literal }
 
+type ExpressionStatement struct {
+	Token Token // First token of the expression
+	Expression Expression
+}
+
+func (es *ExpressionStatement) statementNode() {}
+func (es *ExpressionStatement) TokenLiteral() string {return es.Token.Literal}
 // Expressions
 type Identifier struct {
 	Token Token // IDENT

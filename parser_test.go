@@ -8,12 +8,13 @@ import (
 func TestParseProgram(t *testing.T) {
 	input := `new c;
 	crt c.sales = rev:100.0:v10;
-	crt c.costs = exp:222:a10`
+	crt c.costs = exp:222:a10;
+	c;`
 	l := NewLexer(input)
 	p := NewParser(l)
 	program := p.ParseProgram()
-	if len(program.Statements) != 3 {
-		t.Errorf("expect 3 argments got:%v\n%+v",len(program.Statements),program.Statements[0])
+	for i, statement := range program.Statements {
+		fmt.Printf("%v\t%+v\n",i,statement)
 	}
 	tt := []struct {
 		e string
@@ -21,6 +22,7 @@ func TestParseProgram(t *testing.T) {
 		{e: "*tsim.NewStatement"},
 		{e: "*tsim.CreateStatement"},
 		{e: "*tsim.CreateStatement"},
+		{e: "*tsim.ExpressionStatement"},
 	}
 
 	for i, test := range tt {

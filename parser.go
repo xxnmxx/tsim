@@ -36,7 +36,7 @@ func (p *Parser) parseStatement() Statement {
 	case CREATE:
 		return p.parseCreateStatement()
 	default:
-		return nil
+		return p.parseExpressionStatement()
 	}
 }
 
@@ -94,6 +94,21 @@ func (p *Parser) parseAccLiteral() *AccLiteral {
 	p.nextToken()
 	al.VatToken = p.curToken
 	return &al
+}
+
+// Need extend
+func (p *Parser) parseExpressionStatement() *ExpressionStatement {
+	stmt := &ExpressionStatement{Token:p.curToken}
+	stmt.Expression = p.parseIdentifier()
+	p.nextToken()
+	if p.peekTokenIs(SEMICOLON) {
+		p.nextToken()
+	}
+	return stmt
+}
+
+func (p *Parser) parseIdentifier() Expression {
+	return &Identifier{Token:p.curToken,Value:p.curToken.Literal}
 }
 
 // Helper functions
