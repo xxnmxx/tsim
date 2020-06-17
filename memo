@@ -3,3 +3,4 @@
 06/08 Continue to make NewLiteral related things.Let's make enviroment next.
 06/14 Wip evaluator_test. Eval() returns ERROR obj.
 06/16 ok with newstatement. Let's make create and identifier next!!
+06/16 identifier is ok. create next!

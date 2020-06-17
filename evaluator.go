@@ -1,6 +1,9 @@
 package tsim
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 func Eval(node Node, env *Enviroment) Object {
 	switch node := node.(type) {
@@ -14,18 +17,35 @@ func Eval(node Node, env *Enviroment) Object {
 		//}
 		env.Set(node.Name.Value, node.Value)
 		return node.Value
+	// FixMe:(
+	case *CreateStatement:
+		attr, ok := Eval(node.Attr ,env).(*Corp)
+		if !ok {
+			return &Error{Message: "interface conversion error"}
+		}
+		name := node.Name.Value
+		acctype := LookupAccToken(node.Value.AccToken.Literal)
+		value, err := strconv.ParseFloat(node.Value.Value.Literal, 64)
+		if err != nil {
+			return &Error{Message: "float convert error"}
+		}
+		vattype := LookupVatToken(node.Value.VatToken.Literal)
+
+		attr.CreateAcc(name, acctype, value, vattype)
+		return attr
 	case *ExpressionStatement:
-		return Eval(node.Expression,env)
+		return Eval(node.Expression, env)
 	// Expressions
 	case *CorpLiteral:
 		return NewCorp()
 	case *Identifier:
 		return evalIdentifier(node, env)
 	}
-	return &Error{Message: "out of switch"}
+	//return &Error{Message: "out of switch"}
+	return nil
 }
 
-// FixMe:( This must be wrong.
+// Fixed:)
 func evalProgram(program *Program, env *Enviroment) Object {
 	var result Object
 	for _, statement := range program.Statements {

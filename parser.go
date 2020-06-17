@@ -59,7 +59,7 @@ func (p *Parser) parseCreateStatement() *CreateStatement {
 	if !p.expectPeek(IDENT) {
 		return nil
 	}
-	stmt.Name = &Identifier{
+	stmt.Attr = &Identifier{
 		Token: p.curToken,
 		Value: p.curToken.Literal,
 	}
@@ -69,7 +69,7 @@ func (p *Parser) parseCreateStatement() *CreateStatement {
 	if !p.expectPeek(IDENT) {
 		return nil
 	}
-	stmt.Attr = &Identifier{
+	stmt.Name = &Identifier{
 		Token: p.curToken,
 		Value: p.curToken.Literal,
 	}

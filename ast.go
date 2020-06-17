@@ -39,7 +39,7 @@ type CreateStatement struct {
 	Token Token // CREATE token
 	Attr  *Identifier
 	Name  *Identifier
-	Value Expression
+	Value *AccLiteral
 }
 
 func (cs *CreateStatement) statementNode()       {}

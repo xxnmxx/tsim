@@ -8,7 +8,9 @@ import (
 func TestEval(t *testing.T) {
 	env := NewEnviroment()
 	input := `new c;
-	new a`
+	new a;
+	a;
+	crt a.rv = rev:100:v10`
 	l := NewLexer(input)
 	p := NewParser(l)
 	program := p.ParseProgram()
@@ -17,6 +19,8 @@ func TestEval(t *testing.T) {
 	tt := []struct {
 		e ObjectType
 	}{
+		{e: CORP_OBJ},
+		{e: CORP_OBJ},
 		{e: CORP_OBJ},
 		{e: CORP_OBJ},
 	}
