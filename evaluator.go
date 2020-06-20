@@ -25,13 +25,21 @@ func Eval(node Node, env *Enviroment) Object {
 		}
 		name := node.Name.Value
 		acctype := LookupAccToken(node.Value.AccToken.Literal)
+		if string(acctype) == "" {
+			return &Error{Message: "can not find accType"}
+		}
 		value, err := strconv.ParseFloat(node.Value.Value.Literal, 64)
 		if err != nil {
 			return &Error{Message: "float convert error"}
 		}
 		vattype := LookupVatToken(node.Value.VatToken.Literal)
-
-		attr.CreateAcc(name, acctype, value, vattype)
+		if vattype == "" {
+			return &Error{Message: "can not find vatType"}
+		}
+		err = attr.CreateAcc(name, acctype, value, vattype)
+		if err != nil {
+			return &Error{Message: "acc already exists"}
+		}
 		return attr
 	case *ExpressionStatement:
 		return Eval(node.Expression, env)
@@ -41,7 +49,6 @@ func Eval(node Node, env *Enviroment) Object {
 	case *Identifier:
 		return evalIdentifier(node, env)
 	}
-	//return &Error{Message: "out of switch"}
 	return nil
 }
 
